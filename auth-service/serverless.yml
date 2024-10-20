@@ -11,6 +11,7 @@ provider:
   profile: sls
   environment:
     AUTH0_PUBLIC_KEY: ${ssm:/auth0-public-key}
+    STAGE: ${self:provider.stage}
   httpApi:
     cors: true
 
