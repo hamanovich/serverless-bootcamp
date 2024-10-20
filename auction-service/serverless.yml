@@ -1,0 +1,68 @@
+org: devhamanovich
+app: auction
+service: auction-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: eu-central-1
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  profile: sls
+  environment:
+    AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
+    STAGE: ${self:provider.stage}
+  iam:
+    role:
+      statements:
+        - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
+  httpApi:
+    cors: true
+
+resources:
+  Resources:
+    AuctionsTable: ${file(resources/AuctionsTable.yml):AuctionsTable}
+
+functions:
+  createAuction:
+    handler: handler.createAuction
+    events:
+      - http:
+          path: auction
+          method: POST
+          authorizer: ${self:custom.authorizer}
+
+  getAuctions:
+    handler: handler.getAuctions
+    events:
+      - http:
+          path: auctions
+          method: GET
+          authorizer: ${self:custom.authorizer}
+
+  getAuction:
+    handler: handler.getAuction
+    events:
+      - http:
+          path: auction/{id}
+          method: GET
+          authorizer: ${self:custom.authorizer}
+
+  placeBid:
+    handler: handler.placeBid
+    events:
+      - http:
+          method: PATCH
+          path: auction/{id}/bid
+          authorizer: ${self:custom.authorizer}
+
+  processAuctions:
+    handler: handler.processAuctions
+    # events:
+    #   - schedule: rate(1 hour)
+
+custom:
+  authorizer: arn:aws:lambda:${aws:region}:${aws:accountId}:function:auth-service-${self:provider.stage}-auth
+  AuctionsTable:
+    name: !Ref AuctionsTable
+    arn: !GetAtt AuctionsTable.Arn

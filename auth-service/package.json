@@ -1,0 +1,24 @@
+{
+  "name": "auth-service",
+  "version": "1.0.0",
+  "description": "Auth service for API Gateway",
+  "scripts": {
+    "deploy": "sls deploy --verbose",
+    "format": "prettier \"**/*.+(js|json|yml|mjs)\" --write"
+  },
+  "author": "Siarhei Hamanovich <dev.hamanovich@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@middy/core": "5.5.1",
+    "@middy/http-cors": "5.5.1",
+    "@middy/http-error-handler": "5.5.1",
+    "@middy/http-event-normalizer": "5.5.1",
+    "@middy/http-json-body-parser": "5.5.1",
+    "@middy/validator": "5.5.1",
+    "http-errors": "2.0.0",
+    "jsonwebtoken": "9.0.2"
+  },
+  "devDependencies": {
+    "prettier": "3.3.3"
+  }
+}
