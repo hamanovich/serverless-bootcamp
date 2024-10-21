@@ -38,3 +38,15 @@ custom:
     name: MailQueue-${self:provider.stage}
     arn: !GetAtt MailQueue.Arn
     url: !Ref MailQueue
+
+build:
+  esbuild:
+    bundle: true
+    minify: false
+    external:
+      - '@aws-sdk/client-s3'
+    exclude:
+      - '@aws-sdk/*'
+      - '!@aws-sdk/client-bedrock-runtime'
+    packages: external
+    buildConcurrency: 2

@@ -24,13 +24,6 @@ functions:
   auth:
     handler: handler.auth
 
-  publicEndpoint:
-    handler: handler.publicEndpoint
-    events:
-      - http:
-          method: POST
-          path: public
-
   privateEndpoint:
     handler: handler.privateEndpoint
     events:

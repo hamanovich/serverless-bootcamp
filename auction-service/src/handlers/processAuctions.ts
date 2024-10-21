@@ -1,12 +1,12 @@
 import createHttpError from 'http-errors';
-import { getEndedAuctions } from '../utils/getEndedAuctions.mjs';
-import { closeAuction } from '../utils/closeAuction.mjs';
-import logger from '../libs/logger.mjs';
+import { getEndedAuctions } from '../utils/getEndedAuctions';
+import { closeAuction } from '../utils/closeAuction';
+import logger from '../libs/logger';
 
 const processAuctions = async () => {
   try {
     const auctionsToClose = await getEndedAuctions();
-    const closePromises = auctionsToClose.map((auction) => closeAuction(auction));
+    const closePromises = (auctionsToClose || []).map((auction) => closeAuction(auction));
 
     await Promise.all(closePromises);
 

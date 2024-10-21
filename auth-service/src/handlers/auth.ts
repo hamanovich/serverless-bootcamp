@@ -1,14 +1,15 @@
 import jwt from 'jsonwebtoken';
 import createHttpError from 'http-errors';
-import generatePolicy from '../utils/generatePolicy.mjs';
+import generatePolicy from '../utils/generatePolicy';
+import type { Handler } from 'aws-lambda';
 
-const auth = async (event) => {
+const auth: Handler = async (event) => {
   if (!event.authorizationToken) throw new createHttpError.Unauthorized();
 
   const token = event.authorizationToken.replace('Bearer ', '');
 
   try {
-    const claims = jwt.verify(token, process.env.AUTH0_PUBLIC_KEY);
+    const claims = jwt.verify(token, process.env.AUTH0_PUBLIC_KEY!);
     const policy = generatePolicy(claims.sub, event.methodArn);
 
     return {

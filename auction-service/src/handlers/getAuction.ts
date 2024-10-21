@@ -1,7 +1,8 @@
-import commonMiddleware from '../libs/middleware.mjs';
-import { getAuctionById } from '../utils/getAuctionById.mjs';
+import type { Handler } from 'aws-lambda';
+import commonMiddleware from '../libs/middleware';
+import { getAuctionById } from '../utils/getAuctionById';
 
-const getAuction = async (event) => {
+const getAuction: Handler = async (event) => {
   const { id = '' } = event.pathParameters;
   const auction = await getAuctionById(id);
 

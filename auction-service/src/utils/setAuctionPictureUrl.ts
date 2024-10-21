@@ -1,11 +1,12 @@
 import AWS from 'aws-sdk';
+import { Auction } from '../types/auctionTypes';
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
-export const setAuctionPictureUrl = async (id, pictureUrl) => {
+export const setAuctionPictureUrl = async (id: string, pictureUrl: string) => {
   const { Attributes } = await dynamoDB
     .update({
-      TableName: process.env.AUCTIONS_TABLE_NAME,
+      TableName: process.env.AUCTIONS_TABLE_NAME!,
       Key: { id },
       UpdateExpression: 'set pictureUrl = :pictureUrl',
       ExpressionAttributeValues: {
@@ -15,5 +16,5 @@ export const setAuctionPictureUrl = async (id, pictureUrl) => {
     })
     .promise();
 
-  return Attributes;
+  return Attributes as Auction;
 };

@@ -1,12 +1,13 @@
 import AWS from 'aws-sdk';
-import logger from '../libs/logger.mjs';
+import logger from '../libs/logger';
+import type { Auction } from '../types/auctionTypes';
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const sqs = new AWS.SQS();
 
-export const closeAuction = async (auction) => {
+export const closeAuction = async (auction: Auction) => {
   const params = {
-    TableName: process.env.AUCTIONS_TABLE_NAME,
+    TableName: process.env.AUCTIONS_TABLE_NAME!,
     Key: { id: auction.id },
     UpdateExpression: 'set #status = :status',
     ExpressionAttributeValues: {
@@ -28,7 +29,7 @@ export const closeAuction = async (auction) => {
   if (amount === 0) {
     return await sqs
       .sendMessage({
-        QueueUrl: process.env.MAIL_QUEUE_URL,
+        QueueUrl: process.env.MAIL_QUEUE_URL!,
         MessageBody: JSON.stringify({
           subject: 'No bids on your auction item ;(',
           recipient: seller,
@@ -42,7 +43,7 @@ export const closeAuction = async (auction) => {
 
   const notifySeller = sqs
     .sendMessage({
-      QueueUrl: process.env.MAIL_QUEUE_URL,
+      QueueUrl: process.env.MAIL_QUEUE_URL!,
       MessageBody: JSON.stringify({
         subject: 'Your item has been sold!',
         recipient: seller,
@@ -53,7 +54,7 @@ export const closeAuction = async (auction) => {
 
   const notifyBidder = sqs
     .sendMessage({
-      QueueUrl: process.env.MAIL_QUEUE_URL,
+      QueueUrl: process.env.MAIL_QUEUE_URL!,
       MessageBody: JSON.stringify({
         subject: 'You won an auction!',
         recipient: bidder,

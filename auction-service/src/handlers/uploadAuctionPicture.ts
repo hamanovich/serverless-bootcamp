@@ -1,19 +1,21 @@
 import createHttpError from 'http-errors';
 import validator from '@middy/validator';
-import uploadAuctionPictureSchema from '../schemas/uploadAuctionPictureSchema.mjs';
-import commonMiddleware from '../libs/middleware.mjs';
-import logger from '../libs/logger.mjs';
-import { getAuctionById } from '../utils/getAuctionById.mjs';
-import { uploadPictureToS3 } from '../utils/uploadPictureToS3.mjs';
-import { setAuctionPictureUrl } from '../utils/setAuctionPictureUrl.mjs';
+import uploadAuctionPictureSchema from '../schemas/uploadAuctionPictureSchema';
+import commonMiddleware from '../libs/middleware';
+import logger from '../libs/logger';
+import { getAuctionById } from '../utils/getAuctionById';
+import { uploadPictureToS3 } from '../utils/uploadPictureToS3';
+import { setAuctionPictureUrl } from '../utils/setAuctionPictureUrl';
+import type { Handler } from 'aws-lambda';
+import type { Auction } from '../types/auctionTypes';
 
-const uploadAuctionPicture = async (event) => {
+const uploadAuctionPicture: Handler = async (event) => {
   const { id } = event.pathParameters;
   const email = event.requestContext.authorizer['https://auction/email'];
   const auction = await getAuctionById(id);
   const base64 = event.body.replace(/^data:image\/\w+;base64,/, '');
   const buffer = Buffer.from(base64, 'base64');
-  let updatedAuction;
+  let updatedAuction: Auction;
 
   if (auction.seller !== email) throw new createHttpError.Forbidden('You are not the seller of this auction!');
 

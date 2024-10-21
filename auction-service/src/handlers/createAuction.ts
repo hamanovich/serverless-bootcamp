@@ -1,21 +1,23 @@
 import { v4 as uuid } from 'uuid';
 import AWS from 'aws-sdk';
 import createHttpError from 'http-errors';
+import type { Handler } from 'aws-lambda';
 import validator from '@middy/validator';
-import createAuctionSchema from '../schemas/createAuctionSchema.mjs';
-import logger from '../libs/logger.mjs';
-import commonMiddleware from '../libs/middleware.mjs';
+import createAuctionSchema from '../schemas/createAuctionSchema';
+import logger from '../libs/logger';
+import commonMiddleware from '../libs/middleware';
+import type { Auction } from '../types/auctionTypes';
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
-const createAuction = async (event) => {
+const createAuction: Handler = async (event) => {
   const { title, duration = 1 } = event.body;
   const email = event.requestContext.authorizer['https://auction/email'];
   const now = new Date();
   const endDate = new Date();
   endDate.setHours(now.getHours() + duration);
 
-  const auction = {
+  const auction: Auction = {
     id: uuid(),
     title,
     status: 'OPEN',
@@ -30,7 +32,7 @@ const createAuction = async (event) => {
   try {
     await dynamoDB
       .put({
-        TableName: process.env.AUCTIONS_TABLE_NAME,
+        TableName: process.env.AUCTIONS_TABLE_NAME!,
         Item: auction,
       })
       .promise();

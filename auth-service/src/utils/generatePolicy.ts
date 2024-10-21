@@ -1,4 +1,4 @@
-export default (principalId, methodArn) => ({
+export default (principalId: string | (() => string) | undefined, methodArn: string) => ({
   principalId,
   policyDocument: {
     Version: '2012-10-17',

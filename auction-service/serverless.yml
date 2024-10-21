@@ -85,3 +85,15 @@ custom:
   MailQueue:
     arn: ${cf:notification-service-${self:provider.stage}.MailQueueArn}
     url: ${cf:notification-service-${self:provider.stage}.MailQueueUrl}
+
+build:
+  esbuild:
+    bundle: true
+    minify: false
+    external:
+      - '@aws-sdk/client-s3'
+    exclude:
+      - '@aws-sdk/*'
+      - '!@aws-sdk/client-bedrock-runtime'
+    packages: external
+    buildConcurrency: 2

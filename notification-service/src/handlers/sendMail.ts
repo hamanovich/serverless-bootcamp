@@ -1,14 +1,16 @@
 import AWS from 'aws-sdk';
-import logger from '../libs/logger.mjs';
+import type { Handler } from 'aws-lambda';
+import logger from '../libs/logger';
 
 const ses = new AWS.SES({ region: process.env.AWS_PROVIDER_REGION });
 
-const sendMail = async (event) => {
+const sendMail: Handler = async (event) => {
   const record = event.Records[0];
+  console.log('!!!!', record);
   const { subject, body, recipient } = JSON.parse(record.body);
 
   const params = {
-    Source: process.env.SEND_EMAIL_SOURCE,
+    Source: process.env.SEND_EMAIL_SOURCE!,
     Destination: {
       ToAddresses: [recipient],
     },
